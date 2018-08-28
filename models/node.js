@@ -74,6 +74,8 @@ nodeSchema.plugin(encrypt, {
   encryptedFields: ['data'] 
 })
 
+
+// add hash to node data
 nodeDataSchema.post('save', (next) => {
   this.hashValue = utils.createHash(new Set([this.ownerId, this.value, this.ownerName]));
 })
@@ -89,4 +91,24 @@ Node.createGenesis = (value, ownerName, ownerId) => {
       value
     }
   })
+
+  return node.save();
+}
+
+Node.createChild = (nodeReferenceId, value, ownerName, ownerId) => {
+  let genesisReferenceNodeId;
+  Node.findOne({nodeReferenceId}).exec()
+    .then( node => {
+      genesisReferenceNodeId = node.genesisReferenceNodeId
+      let node = new Node({
+        data: {
+          ownerId,
+          ownerName,
+          value
+        },
+        nodeReferenceId,
+        genesisReferenceNodeId
+      })
+    })
+
 }

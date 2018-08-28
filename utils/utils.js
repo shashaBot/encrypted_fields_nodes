@@ -10,6 +10,11 @@ function randU32(cb) {
   }
 }
 
+function createHash(data) {
+	crypto.createHash('md5').update(data).digest("hex");
+}
+
 module.exports = {
-	gen32BitId: randU32
+	gen32BitId: randU32,
+	createHash: createHash
 }

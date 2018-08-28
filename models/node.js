@@ -1,7 +1,17 @@
 const mongoose = require('mongoose');
+
+// mongoose only supports Number type and not double which by default will be converted to string
+// so using importing library for double data type in mongoose
 const Double = require('@mongoosejs/double');
+
+// for auto updation and streamlined incremental integral values in schemas
 const mongooseIncrement = require('mongoose-increment');
+
+// for enabling encryption on fields in mongoose schema
 const encrypt = require('mongoose-encryption');
+
+// utility functions
+const utils = require('../utils/utils');
 
 const encKey = process.env.ENCKEY;
 const sigKey = process.env.SIGKEY
@@ -19,9 +29,8 @@ const nodeDataSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  hash: {
-    type: String,
-    required: true
+  hashValue: {
+    type: String
   }
 })
 
@@ -40,8 +49,7 @@ const NodeSchema = mongoose.Schema({
     required: true
   },
   referenceNodeId: {
-    type: String,
-    required: true
+    type: String
   },
   childReferenceNodeId: {
     type: [String],
@@ -52,8 +60,7 @@ const NodeSchema = mongoose.Schema({
     required: true
   },
   hashValue: {
-    type: String,
-    required: true
+    type: String
   }
 });
 
@@ -63,9 +70,23 @@ nodeSchema.plugin(mongooseIncrement, {
 })
 
 nodeSchema.plugin(encrypt, {
-  encryptionKey: encKey,
-  signingKey: sigKey, 
+  secret: process.env.ENCRYPTION_SECRET
   encryptedFields: ['data'] 
 })
 
+nodeDataSchema.post('save', (next) => {
+  this.hashValue = utils.createHash(new Set([this.ownerId, this.value, this.ownerName]));
+})
+
 const Node = module.exports = mongoose.model('Node', NodeScnema);
+
+
+Node.createGenesis = (value, ownerName, ownerId) => {
+  let node = new Node({
+    data: {
+      ownerId,
+      ownerName,
+      value
+    }
+  })
+}

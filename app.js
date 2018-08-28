@@ -1,8 +1,7 @@
 const express = require('express');
-const path = require('path');
+// const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
 const config = require('./config/database');
 
 mongoose.connect(config.database);
@@ -22,61 +21,17 @@ db.on('error', function(err) {
 const app = express();
 
 //body-parser middleware
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-// Set public folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Bring in models
-let Article = require('./models/article');
-
-
-//load template engine
-app.set('views', path.join(__dirname, 'views'));
-
-app.set('view engine', 'pug');
-
-
-// Express validator  middleware
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-      var namespace = param.split('.')
-      , root    = namespace.shift()
-      , formParam = root;
-
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
-  }
-}));
+// Bring in routes
+let Node = require('./routes/node');
 
 //home route
 app.get('/', (req, res) => {
-  Article.find({}, function(err, articles) {
-    if(err) {
-      console.log(err);
-    }
-    else {
-      res.render('index', {
-        title: 'Articles',
-        articles: articles
-      });
-    }
-  });
-
+  res.send('please use /api route for interacting with CRUD application')
 });
 
-let articles = require('./routes/articles');
-let users = require('./routes/users');
-
-app.use('/articles', articles);
-app.use('/users', users);
+app.use('/api', Node);
 
 //start server
 const port = process.env.PORT || 8080;

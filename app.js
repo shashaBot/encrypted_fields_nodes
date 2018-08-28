@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const config = require('./config/database');
 
+require('dotenv').config()
+
 mongoose.connect(config.database);
 let db = mongoose.connection;
 

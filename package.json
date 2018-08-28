@@ -4,16 +4,17 @@
   "description": "Simple knowledge base app",
   "main": "app.js",
   "scripts": {
-    "start": "node app",
-    "postinstall": "node node_modules/bower/bin/bower install"
+    "start": "node app"
   },
   "author": "ShashaBot",
   "license": "ISC",
   "dependencies": {
     "@mongoosejs/double": "^0.1.1",
-    "body-parser": "^1.17.2",
-    "express": "^4.15.4",
-    "mongoose": "^4.11.6",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.10",
+    "mongoose-encryption": "^2.0.1",
     "mongoose-increment": "^2.0.0"
   }
 }
